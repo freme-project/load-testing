@@ -67,7 +67,6 @@ for n in range(min_threads,max_threads,increment):
     results.append([n,t_avg,kb_avg,time_per_request,throughput,kb_sec,std_dev])
 
 if plot:
-    colors="rgbycmk"
     titles=["Average Time per Request (ms)","Average Size of Request (bytes)", "Total time per Request (ms)","Throughput (requests/second)","kb/sec","Standard Deviation"]
     fig=plt.figure()
     for e in range(6):
