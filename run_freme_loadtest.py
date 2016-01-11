@@ -1,5 +1,5 @@
 from __future__ import division
-import math
+import math, csv, sys, os
 
 #Parameters
 min_threads=5
@@ -9,16 +9,17 @@ jmxfile="freme.jmx"
 csvfile="results.csv"
 composedlog="composed_summary_reports"
 dataset="sample_textfiles"
-#Imports, attempts to import matplotlib(plotting library)
-import csv, sys,os
-plot=False
 
+#Attempts to import matplotlib(plotting library)
+plot=False
 try:
     import matplotlib.pyplot as plt
     plot=True
 except:
-    print("Matplotlib not installed, will not plot runtimes")
+    print("Matplotlib not installed, will not plot - install with apt-get or pip")
 
+
+"""
 #Removes previous csv and composed-log file
 os.system("rm "+csvfile)
 os.system("rm "+composedlog)
@@ -33,6 +34,8 @@ for i in range(min_threads,max_threads,increment):
     os.system("echo \""+report+"\" >> "+composedlog)
     k+=i
     k%=n_docs
+"""
+
 
 #Parses result
 with open(csvfile,'r') as csvfile:
@@ -81,12 +84,10 @@ for n in range(min_threads,max_threads,increment):
     results.append([n,t_avg,kb_avg,total_time_taken,throughput,time_per_request,std_dev])
 
 if plot:
-    titles=["Average Response time per Request (ms)","Average Size of Response (bytes)", "Total time taken for all requests (ms)","Throughput (requests/second)","Total time taken for all requests/ number of parallel requests","Standard Deviation"]
+    titles=["Average Response time per Request (ms)","Average Size of Response (bytes)", "Total time taken for all requests (ms)","Throughput (requests/second)","Total time taken for all requests/ number of parallel requests","Standard Deviation (ms)"]
     fig=plt.figure()
     for e in range(6):
         num=230+(e+1)
-        print num
-        print e
         ax=fig.add_subplot(num)
         for r in results: 
             ax.set_ylabel(titles[e])
