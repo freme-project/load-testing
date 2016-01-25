@@ -1,33 +1,39 @@
-**Step 1: Install jmeter**
+** FREME LOADTEST **
 
-```sudo apt-get install jmeter``` or download the jar [here](https://jmeter.apache.org/download_jmeter.cgi)
+This repository contains a Python script to test the performance of FREME'S NER Service.
 
-**Step 2: Run jmeter**
+All you need is a Python 3 Installation (it will not work with Python 2)
 
-This command opens the FREME jmeter test plan
-```jmeter -t freme.jmx```
+This is done by sending every text file from the `sample_dataset` directory to the NER Service.
+We start with 1 (default) thread (wait for response until we send the next request), and continue upwards.
 
-In the GUI, you can run the test plan by clicking on the green play button.
-Results are shown in the Summary Report, individual requests and responses in the View Results Tree
+The following parameters exist:
 
-This command runs the FREME jmeter test plan without the jmeter GUI:
-```jmeter -n -t freme.jmx```
+* `min_threads` : Amount of threads we start with. Must be an integer greater than 0. Defaults to 1
+* `max_threads` : Amount of threads we end with. Must be an integer greater than min_threads. Defaults to 101
+* `step` : Amount of threads we increase by in every run. Must be an integer greater than 0. Defaults to 5
+* `n_files` : Number of text files to use. When not given, will use every text file in `sample_dataset`. Must be an integer greater than 0
+* `url` : Url to test against. Can not be changed by command line flag, must be changed in source (`loadtest.py`)
+* `dataset_directory` : Path to dataset containing files to test. Defaults to `sample_dataset`. Can not be changed by command line flag, must be changed in source (`loadtest.py`)
 
-This command runs the FREME jmeter test plan without the jmeter GUI and overrides the default number of threads and the default name of the resulting .csv file:
-```jmeter -n -t freme-jmx -J n_threads=30 -J output_csv_file=fremeresults.csv```
+Of which the first 4 can be set by command line flags.
 
-Possible parameters are:
-- n_threads: number of simulataneous requests that will be made to the api, default: 50
-- output_csv_name: name of csv file in which jmeter logs results, default: results.csv
-- start_index: index of text documents to start parsing in /sample_textfiles/, needed to avoid scewed results due to caching, default:0
+** Examples **
 
-**/sample_textfiles/**
+To run with all defaults on, simply run:
 
-The sample textfiles in this folder each are 30 lines of the English classics "Frankenstein" by Mary Shelley and "The Adventures of Sherlock Holmes" by Arthur Conan Doyle.
+```
 
-**run_freme_loadtest.py to run with various amounts of threads**
+python3 loadtest.py
 
-This is a python script that runs jmeter with increasing amount of threads. The start_index parameter is chosen so that caching does not scew results.
-At the top you can choose some parameters.
-The script then parses the resulting .csv file from jmeter and calculates the average elapsed time for each request for each number of threads.
-If it could import matplotlib (plotting library), it will visualize the results.
+```
+
+To run, starting with 5 threads, ending with 50 threads, and testing every 10 steps, run:
+
+```
+
+python3 loadtest.py -min_threads 5 -max_threads 50 -step 10
+
+```
+
+This repository also contains a deprecated JMeter Test. Further instructions can be found inside the `jmeter-test` directory.
