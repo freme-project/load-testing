@@ -1,4 +1,4 @@
-** FREME LOADTEST **
+**FREME LOADTEST**
 
 This repository contains a Python script to test the performance of FREME'S NER Service.
 
@@ -18,7 +18,7 @@ The following parameters exist:
 
 Of which the first 4 can be set by command line flags.
 
-** Examples **
+**Examples**
 
 To run with all defaults on, simply run:
 
