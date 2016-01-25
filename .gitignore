@@ -2,3 +2,6 @@ jmeter.log
 composed_summary_reports
 geany*
 *.csv
+*.idea
+*.iml
+.idea
