@@ -75,18 +75,19 @@ if "-n_files" in sys.argv:
 ### Reads Dataset and collects statistics about it					    ###
 ###############################################################################################
 dataset=[]
-total_size=sum([os.path.getsize(dataset_directory+"/"+x) for x in os.listdir(dataset_directory)])
+total_size=0
 n=0
 for textfile in os.listdir(dataset_directory):
 	if n<n_files:
 		try:
 			f= open(dataset_directory+"/"+textfile,'r')
-		#total_size+=os.path.getsize(dataset_directory+"/"+textfile)
+			n+=1
+			total_size+=os.path.getsize(dataset_directory+"/"+textfile)
 			dataset.append(f.read().encode('utf-8').decode())
-		#print("could not read %s" % textfile)
 		except:
-			print("could not read %s" % textfile)
-print("%d Documents are being used in the dataset, totalling %f kb" % (len(dataset), total_size/1000))
+			print("Could not read %s" % textfile)
+print("%d Documents are being used in the dataset, totalling %d kb" % (len(dataset), round(total_size/1024)))
+print("Average document size is: %f kb" % round((total_size/1024)/len(dataset),3))
 
 
 ###############################################################################################
@@ -113,16 +114,26 @@ for n_threads in range(min_threads, max_threads, step):
 		timetable[n_threads]=t_total
 	urllib.request.urlcleanup()
 
-
 ##############################################################################################
 ### Visualizes Load Test results with matplotlib					   ###
 ##############################################################################################
 try:
 	import matplotlib.pyplot as plt
+	plt.grid(True)
+
+	ticks=[]
+	v=min(timetable.values())
+	while v<=max(timetable.values())+1:
+		ticks.append(v)
+		v+=0.5
+
+	plt.yticks(ticks)
+	plt.xticks(list(timetable.keys()))
+	plt.title("FREME Loadtest Result: "+str(time.asctime()))
 	for k,v in timetable.items():
 		plt.plot(k,v,'ro')
-	plt.ylabel("Total time taken for dataset to be processed (Totalling "+str(int(total_size/1000))+" kb)")
-	plt.xlabel("Number of parallel threads (in executor pattern)")
+		plt.ylabel("Total time taken for dataset ("+str(int(total_size/1024))+" kb total) to be processed (in seconds)")
+		plt.xlabel("Number of parallel threads (in executor pattern)")
 	plt.show()
 except:
 	print("Matplotlib is not installed - no graph will be shown - only console output\nTo install matplotlib go with \"sudo apt-get install python3-matplotlib\" or \"sudo python3-pip install matplotlib\"")
