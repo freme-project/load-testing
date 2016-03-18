@@ -26,7 +26,7 @@ url="http://api-dev.freme-project.eu/current/e-entity/freme-ner/documents?inform
 dataset_directory=os.path.abspath(os.path.dirname(__file__))+"/sample_dataset"
 print(dataset_directory)
 min_threads=1
-max_threads=101
+max_threads=121
 step=5
 n_files=999999999
 
@@ -47,7 +47,7 @@ import time
 if "-min_threads" in sys.argv:
 	try:
 		min_threads=int(sys.argv[sys.argv.index("-min_threads")+1])
-		max_threads=min_threads+1
+		max_threads=max(max_threads,min_threads+1)
 		assert min_threads>0
 	except:
 		raise Exception("-min_threads command line flag has to be followed by an integer value greater than 0")
@@ -117,23 +117,26 @@ for n_threads in range(min_threads, max_threads, step):
 ##############################################################################################
 ### Visualizes Load Test results with matplotlib					   ###
 ##############################################################################################
+
 try:
+	font =  {'weight' : 'bold',
+		'size' : 19 }
 	import matplotlib.pyplot as plt
 	plt.grid(True)
-
 	ticks=[]
 	v=min(timetable.values())
-	while v<=max(timetable.values())+1:
+	while v<=max(timetable.values())+2:
 		ticks.append(v)
 		v+=0.5
-
 	plt.yticks(ticks)
 	plt.xticks(list(timetable.keys()))
-	plt.title("FREME Loadtest Result: "+str(time.asctime()))
+	plt.title("FREME Loadtest Result: "+str(time.asctime()),fontdict = font)
 	for k,v in timetable.items():
 		plt.plot(k,v,'ro')
-		plt.ylabel("Total time taken for dataset ("+str(int(total_size/1024))+" kb total) to be processed (in seconds)")
-		plt.xlabel("Number of parallel threads (in executor pattern)")
+		plt.ylabel("Total time taken for dataset ("+str(int(total_size/1024))+" kb total) to be processed (in seconds)",fontdict=font)
+		plt.xlabel("Number of parallel threads (in executor pattern)",fontdict=font)
+	plt.ylim(plt.ylim()[0],plt.ylim()[1]+1)
+	plt.xlim(plt.xlim()[0]-1,plt.xlim()[1]+1)
 	plt.show()
 except:
 	print("Matplotlib is not installed - no graph will be shown - only console output\nTo install matplotlib go with \"sudo apt-get install python3-matplotlib\" or \"sudo python3-pip install matplotlib\"")
